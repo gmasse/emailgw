@@ -1,0 +1,21 @@
+#cloud-config
+
+packages: ['apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'gnupg-agent', 'docker-ce', 'docker-ce-cli', 'containerd.io']
+package_update: true
+package_upgrade: true
+package_reboot_if_required: true
+apt:
+    preserve_sources_list: true
+    sources:
+        docker-ce.list:
+            source: deb [arch=amd64] https://download.docker.com/linux/ubuntu $RELEASE stable
+            keyid: 0EBFCD88A
+
+write_files:
+  - path: /etc/systemd/network/30-ens3.network
+    permissions: '0644'
+    content: |
+      [Match]
+      Name=ens3
+      [Network]
+      DHCP=ipv4
