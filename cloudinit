@@ -1,6 +1,6 @@
 #cloud-config
 
-packages: ['apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'gnupg-agent', 'docker-ce', 'docker-ce-cli', 'containerd.io']
+packages: ['apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'gnupg-agent', 'docker-ce', 'docker-ce-cli', 'containerd.io', 'docker-compose']
 package_update: true
 package_upgrade: true
 package_reboot_if_required: true
