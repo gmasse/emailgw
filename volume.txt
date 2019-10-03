@@ -1,3 +1,6 @@
 sudo vgcreate vg0 /dev/sdb1
 sudo lvcreate -n lv0 -l 100%FREE vg
 sudo mkfs -t ext4 -L MAILSERVER /dev/vg/lv0
+sudo mkdir -p /mnt/mailserver
+echo 'LABEL=MAILSERVER	/mnt/mailserver	ext4	defaults	0 2' >> /etc/fstab
+sudo mount /mnt/mailserver
