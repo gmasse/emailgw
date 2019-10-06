@@ -1,6 +1,19 @@
-sudo vgcreate vg0 /dev/sdb1
+# no thin-provisionning
+sudo vgcreate vg /dev/sdb1
 sudo lvcreate -n lv0 -l 100%FREE vg
 sudo mkfs -t ext4 -L MAILSERVER /dev/vg/lv0
+
+# with thin-provisionning
+sudo apt-get install thin-provisioning-tools
+sudo vgcreate vg /dev/sdb1
+sudo lvcreate -L 5G -T vg/thinpool -V100G -n lv0
+sudo vi /etc/lvm/lvm.conf
+        snapshot_autoextend_threshold = 70
+sudo mkfs -t ext4 -L MAILSERVER /dev/vg/lv0
+
+
+
+# if needed???
 sudo mkdir -p /mnt/mailserver
 echo 'LABEL=MAILSERVER	/mnt/mailserver	ext4	defaults	0 2' >> /etc/fstab
 sudo mount /mnt/mailserver
