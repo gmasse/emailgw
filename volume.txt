@@ -7,15 +7,10 @@ sudo mkfs -t ext4 -L MAILSERVER /dev/vg/lv0
 
 # with thin-provisionning
 sudo apt-get install thin-provisioning-tools
-sudo pvcreate /dev/sdb1
-sudo vgcreate vg /dev/sdb1
+sudo pvcreate /dev/sdb
+sudo vgcreate vg /dev/sdb
 sudo lvcreate -l 100%FREE -T vg/thinpool -V100G -n lv0 --errorwhenfull y
 sudo mkfs -t ext4 -L MAILSERVER -E nodiscard /dev/vg/lv0
-
-#TODO: notify when thinpool reach X%, in order to extend the blockdevice
-#TO BE VALIDATE: commands to extend vg and thinpool
-#sudo vg
-#sudo lvextend -l +100%FREE vg/thinpool
 
 
 # automatic resize (not used in our case)
@@ -27,6 +22,22 @@ sudo pvcreate /dev/sdb1
 sudo vgcreate vg /dev/sdb1
 sudo lvcreate -L 5G -T vg/thinpool -V100G -n lv0
 sudo mkfs -t ext4 -L MAILSERVER -E nodiscard /dev/vg/lv0
+
+
+#TODO: notify when thinpool reach X%, in order to extend the blockdevice
+#TO BE CONFIRMED
+#disabling
+#TODO: unmount
+sudo vgchange -an vg
+sudo vgexport vg
+###
+(sudo pvscan)
+sudo vgimport vg
+sudo pvresize /dev/sdb
+sudo lvextend -l +100%FREE vg/thinpool
+sudo vgchange -ay vg
+#TODO: mount
+
 
 
 # if needed???
