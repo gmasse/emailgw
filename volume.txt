@@ -30,3 +30,13 @@ sudo mkfs -t ext4 -L MAILSERVER /dev/vg/lv0
 sudo mkdir -p /mnt/mailserver
 echo 'LABEL=MAILSERVER	/mnt/mailserver	ext4	defaults	0 2' >> /etc/fstab
 sudo mount /mnt/mailserver
+
+
+
+
+FAQ
+
+Q: `pvcreate`command returns 'Device /dev/sdx excluded by a filter' error.
+A: Run with -vvv to get more details. In my case: 
+        /dev/sdc: Skipping: Partition table signature found
+   We understand the device was previously partionned. Fix by wiping data: `sudo dd if=/dev/zero of=/dev/sdc bs=1M count=1`
