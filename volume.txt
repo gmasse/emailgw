@@ -1,4 +1,5 @@
 # no thin-provisionning
+sudo pvcreate /dev/sdb1
 sudo vgcreate vg /dev/sdb1
 sudo lvcreate -n lv0 -l 100%FREE vg
 sudo mkfs -t ext4 -L MAILSERVER /dev/vg/lv0
@@ -6,6 +7,7 @@ sudo mkfs -t ext4 -L MAILSERVER /dev/vg/lv0
 
 # with thin-provisionning
 sudo apt-get install thin-provisioning-tools
+sudo pvcreate /dev/sdb1
 sudo vgcreate vg /dev/sdb1
 sudo lvcreate -l 100%FREE -T vg/thinpool -V100G -n lv0 --errorwhenfull y
 sudo mkfs -t ext4 -L MAILSERVER /dev/vg/lv0
@@ -21,6 +23,7 @@ sudo apt-get install thin-provisioning-tools
 sudo vi /etc/lvm/lvm.conf
         thin_pool_autoextend_threshold = 70
 	thin_pool_autoextend_percent = 20
+sudo pvcreate /dev/sdb1
 sudo vgcreate vg /dev/sdb1
 sudo lvcreate -L 5G -T vg/thinpool -V100G -n lv0
 sudo mkfs -t ext4 -L MAILSERVER /dev/vg/lv0
