@@ -35,6 +35,10 @@ echo 'LABEL=MAILSERVER	/mnt/mailserver	ext4	defaults	0 2' >> /etc/fstab
 sudo mount /mnt/mailserver
 
 
+BENCH
+
+sudo apt install fio
+sudo fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --name=test --filename=random_read_write.fio --bs=4k --iodepth=64 --size=1G --readwrite=randrw --rwmixread=75
 
 
 FAQ
