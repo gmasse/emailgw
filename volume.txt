@@ -1,17 +1,19 @@
 ### 1. Storage device setup
 
-# sdb is the low speed blockdevice
-# sdc is the high speed blockdevice
+# sdb is the high (standard) speed blockdevice
+# sdc is the low speed blockdevice for archive (optional)
 
 # 1.a. with thin-provisionning (recommended)
 sudo apt-get install thin-provisioning-tools
 sudo pvcreate /dev/sdb
-sudo vgcreate vg-archive /dev/sdb
-sudo lvcreate -l 100%FREE -T vg-archive/thinpool -V100G -n lv0 --errorwhenfull y
-sudo mkfs -t ext4 -L MAILARCHIVE -E nodiscard /dev/vg-archive/lv-archive
-sudo vgcreate vg-fast /dev/sdc
-sudo lvcreate -l 100%FREE -T vg-fast/thinpool -V100G -n lv0 --errorwhenfull y
-sudo mkfs -t ext4 -L MAILCURRENT -E nodiscard /dev/vg-fast/lv-fast
+sudo vgcreate vg-mail /dev/sdb
+sudo lvcreate -l 100%FREE -T vg-mail/thinpool -V100G -n lv-mail --errorwhenfull y
+sudo mkfs -t ext4 -L MAIL -E nodiscard /dev/vg-mail/lv-mail
+
+(optional)
+sudo vgcreate vg-archive /dev/sdc
+sudo lvcreate -l 100%FREE -T vg-archive/thinpool -V100G -n lv-archive --errorwhenfull y
+sudo mkfs -t ext4 -L ARCHIVE -E nodiscard /dev/vg-archive/lv-archive
 
 
 
@@ -21,28 +23,28 @@ sudo vi /etc/lvm/lvm.conf
         thin_pool_autoextend_threshold = 70
 	thin_pool_autoextend_percent = 20
 sudo pvcreate /dev/sdb
-sudo vgcreate vg /dev/sdb
-sudo lvcreate -L 5G -T vg/thinpool -V100G -n lv0
-sudo mkfs -t ext4 -L MAILARCHIVE -E nodiscard /dev/vg/lv0
+sudo vgcreate vg-mail /dev/sdb
+sudo lvcreate -L 5G -T vg-mail/thinpool -V100G -n lv-mail
+sudo mkfs -t ext4 -L MAILARCHIVE -E nodiscard /dev/vg-mail/lv-mail
 
 
 # 1.c. no thin-provisionning (not recommended)
 sudo pvcreate /dev/sdb
-sudo vgcreate vg /dev/sdb
-sudo lvcreate -n lv0 -l 100%FREE vg
-sudo mkfs -t ext4 -L MAILARCHIVE /dev/vg/lv0
+sudo vgcreate vg-mail /dev/sdb
+sudo lvcreate -n lv-mail -l 100%FREE vg-mail
+sudo mkfs -t ext4 -L MAILARCHIVE /dev/vg-mail/lv-mail
 
 
 
 ### 2. Mount
-sudo mkdir -p /mnt/mailarchive
-echo 'LABEL=MAILARCHIVE	/mnt/mailarchive	ext4	defaults	0 2' >> /etc/fstab
-sudo mount /mnt/mailarchive
+sudo mkdir -p /mnt/mail
+echo 'LABEL=MAIL	/mnt/mail	ext4	defaults	0 2' >> /etc/fstab
+sudo mount /mnt/mail
 
-sudo mkdir -p /mnt/mailcurrent
-echo 'LABEL=MAILCURRENT	/mnt/mailcurrent	ext4	defaults	0 2' >> /etc/fstab
-sudo mount /mnt/mailcurrent
-
+(optional)
+sudo mkdir -p /mnt/archive
+echo 'LABEL=ARCHIVE	/mnt/archive	ext4	defaults	0 2' >> /etc/fstab
+sudo mount /mnt/archive
 
 
 ### 3. Installing local-persist docker plugin (in order to specify mountpoints for volumes)
@@ -55,19 +57,19 @@ curl -fsSL https://raw.githubusercontent.com/MatchbookLab/local-persist/master/s
 #TODO: notify when thinpool reach X%, in order to extend the blockdevice
 
 #disabling
-sudo umount /mnt/mailarchive
-sudo vgchange -an vg
-sudo vgexport vg
+sudo umount /mnt/mail
+sudo vgchange -an vg-mail
+sudo vgexport vg-mail
 
 ### TODO OVH/Openstack API call to extend
 
 #re-enabling
 (sudo pvscan)
-sudo vgimport vg-archive
+sudo vgimport vg-mail
 sudo pvresize /dev/sdb
-sudo lvextend -l +100%FREE vg-archive/thinpool
-sudo vgchange -ay vg-archive
-sudo mount /mnt/mailarchive
+sudo lvextend -l +100%FREE vg-mail/thinpool
+sudo vgchange -ay vg-mail
+sudo mount /mnt/mail
 
 
 
