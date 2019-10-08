@@ -5,7 +5,7 @@ sudo lvcreate -n lv0 -l 100%FREE vg
 sudo mkfs -t ext4 -L MAILSERVER /dev/vg/lv0
 
 
-# with thin-provisionning
+# with thin-provisionning (recommended)
 sudo apt-get install thin-provisioning-tools
 sudo pvcreate /dev/sdb
 sudo vgcreate vg /dev/sdb
@@ -24,26 +24,37 @@ sudo lvcreate -L 5G -T vg/thinpool -V100G -n lv0
 sudo mkfs -t ext4 -L MAILSERVER -E nodiscard /dev/vg/lv0
 
 
+# mount
+sudo mkdir -p /mnt/mailserver
+echo 'LABEL=MAILSERVER	/mnt/mailserver	ext4	defaults	0 2' >> /etc/fstab
+sudo mount /mnt/mailserver
+
+
+# installing local-persist (in order to specify mountpoints for volumes)
+curl -fsSL https://raw.githubusercontent.com/MatchbookLab/local-persist/master/scripts/install.sh | sudo bash
+
+
+
 #TODO: notify when thinpool reach X%, in order to extend the blockdevice
-#TO BE CONFIRMED
+
 #disabling
-#TODO: unmount
+sudo umount /mnt/mailserver
 sudo vgchange -an vg
 sudo vgexport vg
-###
+### TODO OVH/Openstack API call to extend
+#re-enabling
 (sudo pvscan)
 sudo vgimport vg
 sudo pvresize /dev/sdb
 sudo lvextend -l +100%FREE vg/thinpool
 sudo vgchange -ay vg
-#TODO: mount
-
-
-
-# if needed???
-sudo mkdir -p /mnt/mailserver
-echo 'LABEL=MAILSERVER	/mnt/mailserver	ext4	defaults	0 2' >> /etc/fstab
 sudo mount /mnt/mailserver
+
+
+
+
+
+
 
 
 BENCH
