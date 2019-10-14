@@ -1,0 +1,88 @@
+### 1. Storage device setup
+
+# sdb is the high (standard) speed blockdevice
+# sdc is the low speed blockdevice for archive (optional)
+
+# 1.a. with thin-provisionning (recommended)
+sudo apt-get install thin-provisioning-tools
+sudo pvcreate /dev/sdb
+sudo vgcreate vg-mail /dev/sdb
+sudo lvcreate -l 100%FREE -T vg-mail/thinpool -V100G -n lv-mail --errorwhenfull y
+sudo mkfs -t ext4 -L MAIL -E nodiscard /dev/vg-mail/lv-mail
+
+(optional)
+sudo vgcreate vg-archive /dev/sdc
+sudo lvcreate -l 100%FREE -T vg-archive/thinpool -V100G -n lv-archive --errorwhenfull y
+sudo mkfs -t ext4 -L ARCHIVE -E nodiscard /dev/vg-archive/lv-archive
+
+
+
+# 1.b. thin-provisionning with automatic resize (not used in our case because we need to manually extend the blockdevice)
+sudo apt-get install thin-provisioning-tools
+sudo vi /etc/lvm/lvm.conf
+        thin_pool_autoextend_threshold = 70
+	thin_pool_autoextend_percent = 20
+sudo pvcreate /dev/sdb
+sudo vgcreate vg-mail /dev/sdb
+sudo lvcreate -L 5G -T vg-mail/thinpool -V100G -n lv-mail
+sudo mkfs -t ext4 -L MAILARCHIVE -E nodiscard /dev/vg-mail/lv-mail
+
+
+# 1.c. no thin-provisionning (not recommended)
+sudo pvcreate /dev/sdb
+sudo vgcreate vg-mail /dev/sdb
+sudo lvcreate -n lv-mail -l 100%FREE vg-mail
+sudo mkfs -t ext4 -L MAILARCHIVE /dev/vg-mail/lv-mail
+
+
+
+### 2. Mount
+sudo mkdir -p /mnt/mail
+echo 'LABEL=MAIL	/mnt/mail	ext4	defaults	0 2' >> /etc/fstab
+sudo mount /mnt/mail
+
+(optional)
+sudo mkdir -p /mnt/archive
+echo 'LABEL=ARCHIVE	/mnt/archive	ext4	defaults	0 2' >> /etc/fstab
+sudo mount /mnt/archive
+
+
+### 3. Installing local-persist docker plugin (in order to specify mountpoints for volumes)
+curl -fsSL https://raw.githubusercontent.com/MatchbookLab/local-persist/master/scripts/install.sh | sudo bash
+
+
+
+### 4. Logical Volume extension
+
+#TODO: notify when thinpool reach X%, in order to extend the blockdevice
+
+#disabling
+sudo umount /mnt/mail
+sudo vgchange -an vg-mail
+sudo vgexport vg-mail
+
+### TODO OVH/Openstack API call to extend
+
+#re-enabling
+(sudo pvscan)
+sudo vgimport vg-mail
+sudo pvresize /dev/sdb
+sudo lvextend -l +100%FREE vg-mail/thinpool
+sudo vgchange -ay vg-mail
+sudo mount /mnt/mail
+
+
+
+### 5. (Optional) Benchmarks
+
+sudo apt install fio
+sudo fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --name=test --filename=random_read_write.fio --bs=4k --iodepth=64 --size=1G --readwrite=randrw --rwmixread=75
+
+
+
+### 6. FAQ
+
+Q: `pvcreate`command returns 'Device /dev/sdx excluded by a filter' error.
+A: Run with -vvv to get more details. In my case: 
+        /dev/sdc: Skipping: Partition table signature found
+   We understand the device was previously partionned. Fix by wiping data: `sudo dd if=/dev/zero of=/dev/sdc bs=1M count=1`
