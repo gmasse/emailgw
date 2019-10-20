@@ -61,7 +61,17 @@ sudo umount /mnt/mail
 sudo vgchange -an vg-mail
 sudo vgexport vg-mail
 
-### TODO OVH/Openstack API call to extend
+##volume resize via Openstack API
+SRV_NAME='mailserver'
+openstack server show $SRV_NAME
+VOL_ID='e08b15bf-99d0-4a05-8402-8d5dc2425c21'
+
+SRV_ID=`openstack server show $SRV_NAME -f value -c id`
+SRV_DEVICE=`openstack volume show $VOL_ID -f json | python3 -c "import sys, json; data = json.load(sys.stdin)['    attachments']; print(list(filter(lambda volume: volume['server_id'] == '$SRV_ID', data))[0]['device'])"`
+
+openstack server remove volume $SRV_ID $VOL_ID
+openstack volume set --size 16 $VOL_ID
+openstack server add volume --device $SRV_DEVICE $SRV_ID $VOL_ID
 
 #re-enabling
 (sudo pvscan)
