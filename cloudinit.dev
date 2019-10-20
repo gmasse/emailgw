@@ -10,12 +10,14 @@ apt:
         docker-ce.list:
             source: deb [arch=amd64] https://download.docker.com/linux/ubuntu $RELEASE stable
             keyid: 0EBFCD88
-
 write_files:
-  - path: /etc/systemd/network/30-ens3.network
+  - path: /etc/netplan/50-cloud-init.yaml
     permissions: '0644'
     content: |
-      [Match]
-      Name=ens3
-      [Network]
-      DHCP=ipv4
+    network:
+       version: 2
+       ethernets:
+           ens3:
+               dhcp4: true
+               addresses:
+               - 87.98.134.28/32
