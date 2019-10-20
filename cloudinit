@@ -14,10 +14,10 @@ write_files:
   - path: /etc/netplan/50-cloud-init.yaml
     permissions: '0644'
     content: |
-    network:
-       version: 2
-       ethernets:
-           ens3:
-               dhcp4: true
-               addresses:
-               - 87.98.134.28/32
+        network:
+           version: 2
+           ethernets:
+               ens3:
+                   dhcp4: true
+                   addresses:
+                   - 87.98.134.28/32
