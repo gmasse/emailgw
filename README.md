@@ -1,5 +1,18 @@
 # emailgw
 
+## Creating the VM
+
+```
+(optional) openstack keypair create --public-key ~/.ssh/id_rsa.pub Macbook
+nova boot --flavor s1-4 --image "Ubuntu 18.04" --key-name "Macbook" --user-data cloudinit email
+SRV_ID=4e960a2d-b354-45cc-9c58-e0fb84ef2dbc
+
+cinder type-list
+cinder create --volume-type classic 10
+VOL_ID=0e3a4591-a69b-41aa-b0c6-184d86f89ab4
+nova volume-attach $SRV_ID $VOL_ID /dev/sdb
+```
+
 ## IMAP to Dovecot Migration
 
 ### Enable IMAP Master User on source server
