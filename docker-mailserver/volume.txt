@@ -25,25 +25,25 @@ sudo vi /etc/lvm/lvm.conf
 sudo pvcreate /dev/sdb
 sudo vgcreate vg-mail /dev/sdb
 sudo lvcreate -L 5G -T vg-mail/thinpool -V100G -n lv-mail
-sudo mkfs -t ext4 -L MAILARCHIVE -E nodiscard /dev/vg-mail/lv-mail
+sudo mkfs -t ext4 -L MAIL -E nodiscard /dev/vg-mail/lv-mail
 
 
 # 1.c. no thin-provisionning (not recommended)
 sudo pvcreate /dev/sdb
 sudo vgcreate vg-mail /dev/sdb
 sudo lvcreate -n lv-mail -l 100%FREE vg-mail
-sudo mkfs -t ext4 -L MAILARCHIVE /dev/vg-mail/lv-mail
+sudo mkfs -t ext4 -L MAIL -E nodiscard /dev/vg-mail/lv-mail
 
 
 
 ### 2. Mount
 sudo mkdir -p /mnt/mail
-echo 'LABEL=MAIL	/mnt/mail	ext4	defaults	0 2' >> /etc/fstab
+echo -e 'LABEL=MAIL\t/mnt/mail\text4\tdefaults\t0 2' | sudo tee -a /etc/fstab
 sudo mount /mnt/mail
 
 (optional)
 sudo mkdir -p /mnt/archive
-echo 'LABEL=ARCHIVE	/mnt/archive	ext4	defaults	0 2' >> /etc/fstab
+echo -e 'LABEL=ARCHIVE\t/mnt/archive\text4\tdefaults\t0 2' | sudo tee -a /etc/fstab
 sudo mount /mnt/archive
 
 
