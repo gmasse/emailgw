@@ -1,0 +1,8 @@
+*** WORK IN PROGRESS ***
+
+sudo docker run --rm -ti -v $PWD/log/:/var/log/letsencrypt/ -v $PWD/etc/:/etc/letsencrypt/ -p 80:80 certbot/certbot certonly --standalone -d mail.test.antipod.com
+
+
+To renew all:
+
+sudo docker run --rm -ti -v $PWD/log/:/var/log/letsencrypt/ -v $PWD/etc/:/etc/letsencrypt/ -p 80:80 -p 443:443 deliverous/certbot renew
