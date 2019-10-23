@@ -1,0 +1,23 @@
+recipient_delimiter = +-
+
+imapc_host = mail.mydomain.com
+
+# Authenticate as masteruser / masteruser-secret, but use a separate login user.
+# If you don't have a master user, remove the imapc_master_user setting.
+imapc_user = %u
+imapc_master_user = master
+imapc_password = my-master-password
+
+imapc_features = rfc822.size
+# If you have Dovecot v2.2.8+ you may get a significant performance improvement with fetch-headers:
+# imapc_features = $imapc_features fetch-headers
+# Read multiple mails in parallel, improves performance
+mail_prefetch_count = 20
+
+# If the old IMAP server uses INBOX. namespace prefix, set:
+#imapc_list_prefix = INBOX
+
+# for SSL:
+imapc_port = 993
+imapc_ssl = imaps
+ssl_cipher_list = ALL:!LOW:!SSLv2:!EXP:!aNULL
