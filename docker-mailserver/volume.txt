@@ -38,12 +38,12 @@ sudo mkfs -t ext4 -L MAILARCHIVE /dev/vg-mail/lv-mail
 
 ### 2. Mount
 sudo mkdir -p /mnt/mail
-echo 'LABEL=MAIL	/mnt/mail	ext4	defaults	0 2' >> /etc/fstab
+echo -e 'LABEL=MAIL\t/mnt/mail\text4\tdefaults\t0 2' | sudo tee -a /etc/fstab
 sudo mount /mnt/mail
 
 (optional)
 sudo mkdir -p /mnt/archive
-echo 'LABEL=ARCHIVE	/mnt/archive	ext4	defaults	0 2' >> /etc/fstab
+echo -e 'LABEL=ARCHIVE\t/mnt/archive\text4\tdefaults\t0 2' | sudo tee -a /etc/fstab
 sudo mount /mnt/archive
 
 
