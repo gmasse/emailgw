@@ -13,6 +13,22 @@ VOL_ID=0e3a4591-a69b-41aa-b0c6-184d86f89ab4
 nova volume-attach $SRV_ID $VOL_ID /dev/sdb
 ```
 
+## Configuring the VM
+
+```
+echo "server:
+    interface: 127.0.0.1
+    interface: ::1
+    interface: 172.17.0.1
+    access-control: 172.16.0.0/12 allow
+    outgoing-interface: 87.98.134.28" | sudo tee /etc/unbound/unbound.conf.d/docker.conf
+```
+```
+echo "{
+    'dns': [ '172.17.0.1' ]
+}" | sudo tee /etc/docker/daemon.json
+```
+
 ## IMAP to Dovecot Migration
 
 ### Enable IMAP Master User on source server
