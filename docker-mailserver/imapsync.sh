@@ -32,7 +32,7 @@ docker run -d --rm --name mail.imapsync \
     -v "`pwd`/config":/tmp/docker-mailserver \
     -v "`pwd`/config.imapsync/dovecot.cf":/etc/dovecot/local.conf:ro \
     -v "`pwd`/config.imapsync/dhparams.pem":/etc/postfix/dhparams.pem:ro \
-    -v /mnt/mailserver/maildata:/var/mail \
+    -v /mnt/mail/maildata:/var/mail \
     --cap-add=SYS_PTRACE \
     -e PERMIT_DOCKER=host \
     -e DMS_DEBUG=0 \
