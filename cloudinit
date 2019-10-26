@@ -1,6 +1,6 @@
 #cloud-config
 
-packages: ['apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'gnupg-agent', 'docker-ce', 'docker-ce-cli', 'containerd.io', 'docker-compose']
+packages: ['apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'gnupg-agent', 'docker-ce', 'docker-ce-cli', 'containerd.io', 'docker-compose', 'unbound']
 package_update: true
 package_upgrade: true
 package_reboot_if_required: true
@@ -19,5 +19,9 @@ write_files:
            ethernets:
                ens3:
                    dhcp4: true
+                   dhcp4-overrides:
+                        use-dns: false
+                   nameservers:
+                        addresses: [ "127.0.0.1" ]
                    addresses:
                    - 87.98.134.28/32
