@@ -1,10 +1,10 @@
 #! /bin/sh
 
-EMAIL_ACCOUNT=$1
+EMAIL_ACCOUNT_LIST=$@
 
-if [ -z "$EMAIL_ACCOUNT" ]; then
+if [ -z "$EMAIL_ACCOUNT_LIST" ]; then
     echo "ERROR/ Missing argument"
-    echo "usage: $0 myemail@mydomain.com"
+    echo "usage: $0 myemail@mydomain.com ..."
     exit 1
 fi
 
@@ -32,8 +32,9 @@ docker run -d --rm --name mail.imapsync \
     -v "`pwd`/config":/tmp/docker-mailserver \
     -v "`pwd`/config.imapsync/dovecot.cf":/etc/dovecot/local.conf:ro \
     -v "`pwd`/config.imapsync/dhparams.pem":/etc/postfix/dhparams.pem:ro \
-    -v /mnt/mailserver/maildata:/var/mail \
+    -v /mnt/mail/maildata:/var/mail \
     --cap-add=SYS_PTRACE \
+    -e DOVECOT_MAILBOX_FORMAT=mdbox \
     -e PERMIT_DOCKER=host \
     -e DMS_DEBUG=0 \
     -h mail.my-domain.com \
@@ -43,15 +44,18 @@ echo "INFO/ Waiting for container launch"
 #TODO: waitfor unix socket /var/run/dovecot/auth-userdb
 sleep 10
 
-echo "INFO/ Testing if local mailbox exists"
-docker exec -ti mail.imapsync doveadm user $EMAIL_ACCOUNT | grep '^uid'
-if [ $? -eq 0 ]; then
-    echo "INFO/ Migrating emails"
-    docker exec -ti mail.imapsync doveadm -v -o mail_fsync=never sync -1 -R -u $EMAIL_ACCOUNT imapc:
-else
-    echo "WARN/ Mailbox not found"
+for email in "$@"; do
+    echo "INFO/ Testing if local mailbox exists for $email"
+    docker exec -ti mail.imapsync doveadm user $email | grep '^uid'
+    if [ $? -eq 0 ]; then
+        echo "INFO/ Migrating emails"
+        docker exec -ti mail.imapsync doveadm -D -o mail_fsync=never sync -1 -R -u $email imapc:
+    else
+        echo "WARN/ Mailbox not found"
 
-fi
+    fi
+done
+
 
 echo "INFO/ Deleting container"
 docker rm -f mail.imapsync
