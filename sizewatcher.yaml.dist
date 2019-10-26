@@ -1,3 +1,0 @@
-pushover:
-    token: YOUR_PUSHOVER_TOKEN
-    user: YOUR_PUSHOVER_USERID
