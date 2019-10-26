@@ -1,0 +1,6 @@
+{
+  "pushover": {
+    "token": "REPLACE_WITH_YOUR_PUSHOVER_TOKEN",
+    "user": "REPLACE_WITH_YOUR_PUSHOVER_USERID"
+  }
+}
