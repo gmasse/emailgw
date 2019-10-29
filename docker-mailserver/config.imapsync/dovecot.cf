@@ -1,5 +1,9 @@
 recipient_delimiter = +-
 
+namespace inbox {
+  separator = .
+}
+
 imapc_host = mail.mydomain.com
 
 # Authenticate as masteruser / masteruser-secret, but use a separate login user.
