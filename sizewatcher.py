@@ -5,6 +5,7 @@ import http.client, urllib
 
 PUSHOVER_TOKEN = None
 PUSHOVER_USER = None
+THRESHOLD = 80
 
 # --------------------------------------------------------------------------- #
 # retrieve config from diematic.yaml
@@ -15,6 +16,8 @@ if os.path.exists(config_file):
     with open(config_file) as f:
         # use safe_load instead load
         cfg = json.load(f)
+        if isinstance(cfg['threshold'], int):
+            THRESHOLD = cfg['threshold']
         if 'pushover' in cfg:
             if isinstance(cfg['pushover']['token'], str):
                 PUSHOVER_TOKEN = cfg['pushover']['token']
@@ -43,9 +46,9 @@ if data_percent is None or metadata_percent is None:
     print('Cannot retrieve value!')
 else:
     message = ''
-    if data_percent > 80:
+    if data_percent > THRESHOLD:
         message = message + 'data: {}% '.format(data_percent)
-    if metadata_percent > 80:
+    if metadata_percent > THRESHOLD:
         message = message + 'meta: {}% '.format(data_percent)
 
     if len(message) > 0:

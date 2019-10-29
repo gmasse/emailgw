@@ -1,0 +1,36 @@
+version: '2'
+services:
+  mail:
+    image: germainmasse/docker-mailserver:dev
+    hostname: ${HOSTNAME}
+    domainname: ${DOMAINNAME}
+    container_name: ${CONTAINER_NAME}
+    ports:
+    - "${EXTERNAL_IP}:25:25"
+    - "${EXTERNAL_IP}:143:143"
+    - "${EXTERNAL_IP}:587:587"
+    - "${EXTERNAL_IP}:993:993"
+    volumes:
+    - maildata:/var/mail
+    - mailstate:/var/mail-state
+    - maillogs:/var/log/mail
+    - ./config/:/tmp/docker-mailserver/
+    - ../letsencrypt/etc:/etc/letsencrypt/:ro
+    env_file:
+    - .env
+    - env-mailserver
+    cap_add:
+    - NET_ADMIN
+    - SYS_PTRACE
+    restart: always
+volumes:
+  maildata:
+    driver: local-persist
+    driver_opts:
+      mountpoint: /mnt/mail/maildata
+  mailstate:
+    driver: local-persist
+    driver_opts:
+      mountpoint: /mnt/mail/mailstate
+  maillogs:
+    driver: local
