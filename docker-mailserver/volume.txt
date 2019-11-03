@@ -7,12 +7,12 @@
 sudo apt-get install thin-provisioning-tools
 sudo pvcreate /dev/sdb
 sudo vgcreate vg-mail /dev/sdb
-sudo lvcreate -l 100%FREE -T vg-mail/thinpool -V100G -n lv-mail --errorwhenfull y
+sudo lvcreate -l 100%FREE -T vg-mail/thinpool -V100G -n lv-mail --discards --errorwhenfull y
 sudo mkfs -t ext4 -L MAIL -E nodiscard /dev/vg-mail/lv-mail
 
 (optional)
 sudo vgcreate vg-archive /dev/sdc
-sudo lvcreate -l 100%FREE -T vg-archive/thinpool -V100G -n lv-archive --errorwhenfull y
+sudo lvcreate -l 100%FREE -T vg-archive/thinpool -V100G -n lv-archive --discards nopassdown --errorwhenfull y
 sudo mkfs -t ext4 -L ARCHIVE -E nodiscard /dev/vg-archive/lv-archive
 
 
@@ -24,7 +24,7 @@ sudo vi /etc/lvm/lvm.conf
 	thin_pool_autoextend_percent = 20
 sudo pvcreate /dev/sdb
 sudo vgcreate vg-mail /dev/sdb
-sudo lvcreate -L 5G -T vg-mail/thinpool -V100G -n lv-mail
+sudo lvcreate -L 5G -T vg-mail/thinpool -V100G --discards nopassdown -n lv-mail
 sudo mkfs -t ext4 -L MAIL -E nodiscard /dev/vg-mail/lv-mail
 
 
