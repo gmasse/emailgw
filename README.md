@@ -31,7 +31,7 @@ echo "{
 
 ## IMAP to Dovecot Migration
 
-### Enable IMAP Master User on source server
+### Enable IMAP Master User on SOURCE server
 Create a Master password file `passwd.masterusers`
 ```
 echo 'master:'`doveadm pw -s sha512-crypt` > /etc/dovecot/passwd.masterusers
@@ -55,7 +55,7 @@ You can now connect to any IMAP account with master user/password: `myuser@mydom
 
 ([Reference](https://doc.dovecot.org/configuration_manual/authentication/master_users/))
 
-### Sync from source server to new Dovecot server
+### Sync from source server to NEW Dovecot server
 
 Add the follwing configuration to your target Dovecot server. `local.conf` is a good choice:
 ```
