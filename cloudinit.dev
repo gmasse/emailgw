@@ -1,6 +1,6 @@
 #cloud-config
 
-packages: ['apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'gnupg-agent', 'docker-ce', 'docker-ce-cli', 'containerd.io', 'docker-compose', 'build-essential']
+packages: ['apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'gnupg-agent', 'docker-ce', 'docker-ce-cli', 'containerd.io', 'docker-compose', 'build-essential', 'zsh']
 package_update: true
 package_upgrade: true
 package_reboot_if_required: true
@@ -10,14 +10,13 @@ apt:
         docker-ce.list:
             source: deb [arch=amd64] https://download.docker.com/linux/ubuntu $RELEASE stable
             keyid: 0EBFCD88
-write_files:
-  - path: /etc/netplan/50-cloud-init.yaml
-    permissions: '0644'
-    content: |
-        network:
-           version: 2
-           ethernets:
-               ens3:
-                   dhcp4: true
-                   addresses:
-                   - 87.98.134.28/32
+system_info:
+    default_user:
+        name: "ubuntu"
+        shell: /bin/zsh
+runcmd:
+  - runuser -l ubuntu -c 'sh -c "$(curl -fsSL https://raw.githubusercontent.com/gmasse/openstack_docker_env/master/all_in_one.sh)"'
+  - runuser -l ubuntu -c "sh -c 'git config --global core.editor \"vi\"'"
+  - runuser -l ubuntu -c "sh -c 'git config --global core.sshCommand \"ssh -i ~/.ssh/id_rsa_github\"'"
+  - runuser -l ubuntu -c "sh -c 'git config --global user.email \"g-dev@masse.me\"'"
+  - runuser -l ubuntu -c "sh -c 'git config --global user.name \"Germain Masse\"'"
