@@ -29,9 +29,19 @@ echo "{
 }" | sudo tee /etc/docker/daemon.json
 ```
 
+## (Optional) Log and Metrics management
+```
+wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
+echo "deb https://artifacts.elastic.co/packages/7.x/apt stable main" | sudo tee -a /etc/apt/sources.list.d/elastic-7.x.list
+sudo apt-get update && sudo apt-get install filebeat
+sudo vi /etc/filebeat/filebeat.yml
+sudo systemctl enable filebeat
+sudo systemctl start filebeat
+```
+
 ## IMAP to Dovecot Migration
 
-### Enable IMAP Master User on source server
+### Enable IMAP Master User on SOURCE server
 Create a Master password file `passwd.masterusers`
 ```
 echo 'master:'`doveadm pw -s sha512-crypt` > /etc/dovecot/passwd.masterusers
@@ -55,7 +65,7 @@ You can now connect to any IMAP account with master user/password: `myuser@mydom
 
 ([Reference](https://doc.dovecot.org/configuration_manual/authentication/master_users/))
 
-### Sync from source server to new Dovecot server
+### Sync from source server to NEW Dovecot server
 
 Add the follwing configuration to your target Dovecot server. `local.conf` is a good choice:
 ```
@@ -85,3 +95,10 @@ doveadm -o mail_fsync=never sync -1 -R -u user@domain imapc:
 
 
 https://wiki2.dovecot.org/Migration/Dsync
+
+## Tips
+
+Retreiving and spam testing of an e-mail:
+```
+doveadm fetch -u germain@masse.me text HEADER Message-Id '1234@abcd' MAILBOX Inbox | su --login amavis -c 'spamassassin -d -t'
+```

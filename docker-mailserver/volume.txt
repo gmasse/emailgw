@@ -38,12 +38,12 @@ sudo mkfs -t ext4 -L MAIL -E nodiscard /dev/vg-mail/lv-mail
 
 ### 2. Mount
 sudo mkdir -p /mnt/mail
-echo -e 'LABEL=MAIL\t/mnt/mail\text4\tdefaults\t0 2' | sudo tee -a /etc/fstab
+echo -e 'LABEL=MAIL\t/mnt/mail\text4\tdefaults,noatime\t0 2' | sudo tee -a /etc/fstab
 sudo mount /mnt/mail
 
 (optional)
 sudo mkdir -p /mnt/archive
-echo -e 'LABEL=ARCHIVE\t/mnt/archive\text4\tdefaults\t0 2' | sudo tee -a /etc/fstab
+echo -e 'LABEL=ARCHIVE\t/mnt/archive\text4\tdefaults,noatime\t0 2' | sudo tee -a /etc/fstab
 sudo mount /mnt/archive
 
 
@@ -96,3 +96,9 @@ Q: `pvcreate`command returns 'Device /dev/sdx excluded by a filter' error.
 A: Run with -vvv to get more details. In my case: 
         /dev/sdc: Skipping: Partition table signature found
    We understand the device was previously partionned. Fix by wiping data: `sudo dd if=/dev/zero of=/dev/sdc bs=1M count=1`
+
+Q: How to recover deleted space from thin-provisioned storage?
+A: Ubuntu 18.04 triggers `fstrim` once a week. To verify, you can execute `systemctl status fstrim`:
+	fstrim.service - Discard unused blocks
+		Loaded: loaded (/lib/systemd/system/fstrim.service; static; vendor preset: enabled)
+		Active: inactive (dead)
