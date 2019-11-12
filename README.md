@@ -95,3 +95,10 @@ doveadm -o mail_fsync=never sync -1 -R -u user@domain imapc:
 
 
 https://wiki2.dovecot.org/Migration/Dsync
+
+## Tips
+
+Retreiving and spam testing of an e-mail:
+```
+doveadm fetch -u germain@masse.me text HEADER Message-Id '1234@abcd' MAILBOX Inbox | su --login amavis -c 'spamassassin -d -t'
+```
