@@ -1,1 +1,2 @@
 recipient_delimiter = +-
+enable_long_queue_ids = yes
