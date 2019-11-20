@@ -8,7 +8,7 @@ PUSHOVER_USER = None
 THRESHOLD = 80
 
 # --------------------------------------------------------------------------- #
-# retrieve config from diematic.yaml
+# retrieve config from sizewatcher.json
 # --------------------------------------------------------------------------- #
 main_base = os.path.dirname(__file__)
 config_file = os.path.join(main_base, "sizewatcher.json")
