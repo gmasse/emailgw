@@ -12,7 +12,7 @@ wget https://raw.githubusercontent.com/tomav/docker-mailserver/master/elk/amavis
 wget https://raw.githubusercontent.com/ninech/logstash-patterns/master/patterns.d/dovecot.grok -O patterns/dovecot.grok
 wget https://raw.githubusercontent.com/whyscream/postfix-grok-patterns/master/50-filter-postfix.conf -O 50-filter-postfix.conf
 wget https://raw.githubusercontent.com/tomav/docker-mailserver/master/elk/16-amavis.conf -O 51-filter-amavis.conf
-wget https://raw.githubusercontent.com/ninech/logstash-patterns/master/exmples/50-filter-dovecot.conf > 52-filter-dovecot.conf
+wget https://raw.githubusercontent.com/ninech/logstash-patterns/master/exmples/50-filter-dovecot.conf -O 52-filter-dovecot.conf
 
 sed -i 's|/etc/logstash/patterns.d|/usr/share/logstash/pipeline/beats/patterns|' *.conf
 ```
