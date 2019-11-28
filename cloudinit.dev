@@ -20,3 +20,4 @@ runcmd:
   - runuser -l ubuntu -c "sh -c 'git config --global core.sshCommand \"ssh -i ~/.ssh/id_rsa_github\"'"
   - runuser -l ubuntu -c "sh -c 'git config --global user.email \"g-dev@masse.me\"'"
   - runuser -l ubuntu -c "sh -c 'git config --global user.name \"Germain Masse\"'"
+  - sh -c "$(curl -fsSL https://raw.githubusercontent.com/gmasse/openstack_docker_env/master/custom-ubuntu-motd.sh)"
