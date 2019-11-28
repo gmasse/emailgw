@@ -3,13 +3,13 @@
 ## Creating the VM
 
 ```
-(optional) openstack keypair create --public-key ~/.ssh/id_rsa.pub Macbook
-nova boot --flavor s1-4 --image "Ubuntu 18.04" --key-name "Macbook" --user-data cloudinit email
-SRV_ID=4e960a2d-b354-45cc-9c58-e0fb84ef2dbc
+(optional) openstack keypair create --public-key ~/.ssh/id_rsa.pub mykey
+nova boot --flavor s1-4 --image "Ubuntu 18.04" --key-name mykey --user-data cloudinit email
+SRV_ID=4e960a2d-c354-45cc-9d58-e0fb84ef2dbc
 
 cinder type-list
 cinder create --volume-type classic 10
-VOL_ID=0e3a4591-a69b-41aa-b0c6-184d86f89ab4
+VOL_ID=0e3a4a91-a69b-41ab-b0c6-184d86f89ab4
 nova volume-attach $SRV_ID $VOL_ID /dev/sdb
 ```
 
@@ -21,7 +21,7 @@ echo "server:
     interface: ::1
     interface: 172.17.0.1
     access-control: 172.16.0.0/12 allow
-    outgoing-interface: 87.98.134.28" | sudo tee /etc/unbound/unbound.conf.d/docker.conf
+    outgoing-interface: 1.2.3.4" | sudo tee /etc/unbound/unbound.conf.d/docker.conf
 ```
 ```
 echo "{
@@ -100,5 +100,5 @@ https://wiki2.dovecot.org/Migration/Dsync
 
 Retreiving and spam testing of an e-mail:
 ```
-doveadm fetch -u germain@masse.me text HEADER Message-Id '1234@abcd' MAILBOX Inbox | su --login amavis -c 'spamassassin -d -t'
+doveadm fetch -u user@domain.com text HEADER Message-Id '1234@abcd' MAILBOX Inbox | su --login amavis -c 'spamassassin -d -t'
 ```
