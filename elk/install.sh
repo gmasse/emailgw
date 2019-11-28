@@ -1,27 +1,35 @@
 #!/bin/sh
 
-ELK_DIR=~/docker-elk
+if [ $(id -u) -ne 0 ]
+  then echo "Please run as root"
+  exit
+fi
 
-git clone "https://github.com/deviantony/docker-elk.git" ${ELK_DIR}
+set -x
+set -e
+
+DEFAULT_USER=ubuntu
+
+USER_DIR=$(runuser -l ubuntu -c "sh -c 'echo \$HOME'")
+SRC_DIR=${USER_DIR}/emailgw/elk
+ELK_DIR=${USER_DIR}/docker-elk
+
+
+### Global configuration
+
+cp -f ${SRC_DIR}/etc/iptables/* /etc/iptables/
+# TODO: update rules.v4 to match your needs
+
+
+### ELK installation
+
+runuser -l ${DEFAULT_USER} -c "sh -c 'git clone \"https://github.com/deviantony/docker-elk.git\" ${ELK_DIR}'"
 
 
 ### Logstash configuration
 
-CONFIG_DIR=${ELK_DIR}/logstash/config
-BEATS_PIPELINE_DIR=${ELK_DIR}/logstash/pipeline/beats
+runuser -l ${DEFAULT_USER} -c "sh -c 'mkdir -p ${ELK_DIR}/logstash/config'"
+runuser -l ${DEFAULT_USER} -c "sh -c 'mkdir -p ${ELK_DIR}/logstash/pipeline/beats'"
+runuser -l ${DEFAULT_USER} -c "sh -c 'cp -Rf ${SRC_DIR}/logstash ${ELK_DIR}/logstash'"
 
-mkdir -p ${BEATS_PIPELINE_DIR}
-mkdir -p ${BEATS_PIPELINE_DIR}/patterns
-
-
-
-
-wget https://raw.githubusercontent.com/whyscream/postfix-grok-patterns/master/postfix.grok -O patterns/postfix.grok
-wget https://raw.githubusercontent.com/tomav/docker-mailserver/master/elk/amavis.grok -O patterns/amavis.grok
-wget https://raw.githubusercontent.com/ninech/logstash-patterns/master/patterns.d/dovecot.grok -O patterns/dovecot.grok
-wget https://raw.githubusercontent.com/whyscream/postfix-grok-patterns/master/50-filter-postfix.conf -O 50-filter-postfix.conf
-wget https://raw.githubusercontent.com/tomav/docker-mailserver/master/elk/16-amavis.conf -O 51-filter-amavis.conf
-wget https://raw.githubusercontent.com/ninech/logstash-patterns/master/exmples/50-filter-dovecot.conf -O 52-filter-dovecot.conf
-
-sed -i 's|/etc/logstash/patterns.d|/usr/share/logstash/pipeline/beats/patterns|' *.conf
-
+runuser -l ${DEFAULT_USER} -c "sh -c 'cp -f ${SRC_DIR}/docker-compose.yml ${ELK_DIR}/'"
