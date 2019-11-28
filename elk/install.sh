@@ -30,6 +30,6 @@ runuser -l ${DEFAULT_USER} -c "sh -c 'git clone \"https://github.com/deviantony/
 
 runuser -l ${DEFAULT_USER} -c "sh -c 'mkdir -p ${ELK_DIR}/logstash/config'"
 runuser -l ${DEFAULT_USER} -c "sh -c 'mkdir -p ${ELK_DIR}/logstash/pipeline/beats'"
-runuser -l ${DEFAULT_USER} -c "sh -c 'cp -Rf ${SRC_DIR}/logstash ${ELK_DIR}/logstash'"
+runuser -l ${DEFAULT_USER} -c "sh -c 'cp -Rf ${SRC_DIR}/logstash ${ELK_DIR}/'"
 
 runuser -l ${DEFAULT_USER} -c "sh -c 'cp -f ${SRC_DIR}/docker-compose.yml ${ELK_DIR}/'"
