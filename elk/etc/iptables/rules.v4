@@ -14,8 +14,8 @@
 -A INPUT -i ens3 -j FILTERS
 
 -A DOCKER-USER -i ens3 -m conntrack --ctstate RELATED,ESTABLISHED -j RETURN
--A DOCKER-USER -s IP_WITH_FULL_ACCESS/32 -i ens3 -j RETURN
--A DOCKER-USER -s IP_WITH_KIBANA_ACCESS/32 -p tcp -m tcp -m conntrack --ctorigdstport 5601 -i ens3 -j RETURN
+#-A DOCKER-USER -s IP_WITH_FULL_ACCESS/32 -i ens3 -j RETURN
+#-A DOCKER-USER -s IP_WITH_KIBANA_ACCESS/32 -p tcp -m tcp -m conntrack --ctorigdstport 5601 -i ens3 -j RETURN
 -A DOCKER-USER -i ens3 -j DROP
 -A DOCKER-USER -j RETURN
 
