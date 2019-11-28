@@ -1,5 +1,5 @@
-OVERRIDE_HOSTNAME=mail.antipod.com
-POSTMASTER_ADDRESS=hostmaster@antipod.com
+OVERRIDE_HOSTNAME=mail.mydomain.com
+POSTMASTER_ADDRESS=hostmaster@mydomain.com
 ENABLE_POP3=0
 ENABLE_CLAMAV=1
 ENABLE_FAIL2BAN=1
