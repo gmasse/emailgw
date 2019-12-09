@@ -24,4 +24,4 @@ write_files:
                    nameservers:
                         addresses: [ "127.0.0.1" ]
                    addresses:
-                   - 87.98.134.28/32
+                   - A.B.C.D/32
