@@ -8,7 +8,7 @@ nova boot --flavor s1-4 --image "Ubuntu 18.04" --key-name mykey --user-data clou
 SRV_ID=4e960a2d-c354-45cc-9d58-e0fb84ef2dbc
 
 cinder type-list
-cinder create --volume-type classic 10
+cinder create --name email_storage --volume-type classic 10
 VOL_ID=0e3a4a91-a69b-41ab-b0c6-184d86f89ab4
 nova volume-attach $SRV_ID $VOL_ID /dev/sdb
 ```
@@ -37,6 +37,14 @@ sudo apt-get update && sudo apt-get install filebeat
 sudo vi /etc/filebeat/filebeat.yml
 sudo systemctl enable filebeat
 sudo systemctl start filebeat
+```
+
+## Maintenance
+
+### Backup
+Snapshot the volume:
+```
+openstack volume snapshot create --force --volume email_storage email_storage_snap01
 ```
 
 ## IMAP to Dovecot Migration
