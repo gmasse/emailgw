@@ -4,7 +4,7 @@
 
 ```
 (optional) openstack keypair create --public-key ~/.ssh/id_rsa.pub mykey
-nova boot --flavor s1-4 --image "Ubuntu 18.04" --key-name mykey --user-data cloudinit email
+openstack server create --flavor s1-4 --key-name mykey --user-data cloudinit --image "Ubuntu 18.04" --property static_ip=1.2.3.4/32 email
 SRV_ID=4e960a2d-c354-45cc-9d58-e0fb84ef2dbc
 
 cinder type-list

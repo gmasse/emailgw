@@ -1,3 +1,4 @@
+## template: jinja
 #cloud-config
 
 packages: ['apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'gnupg-agent', 'docker-ce', 'docker-ce-cli', 'containerd.io', 'docker-compose', 'unbound']
@@ -24,4 +25,4 @@ write_files:
                    nameservers:
                         addresses: [ "127.0.0.1" ]
                    addresses:
-                   - 87.98.134.28/32
+                   - {{ ds.meta_data.meta.static_ip }}
