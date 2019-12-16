@@ -1,0 +1,28 @@
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD DROP [0:0]
+:OUTPUT ACCEPT [0:0]
+:FILTERS - [0:0]
+:DOCKER-USER - [0:0]
+
+-F INPUT
+-F DOCKER-USER
+-F FILTERS
+
+-A INPUT -i lo -j ACCEPT
+-A INPUT -p icmp --icmp-type any -j ACCEPT
+-A INPUT -i ens3 -j FILTERS
+
+-A DOCKER-USER -i ens3 -m conntrack --ctstate RELATED,ESTABLISHED -j RETURN
+-A DOCKER-USER -p tcp -m tcp -m conntrack --ctorigdstport 25 -i ens3 -j RETURN
+-A DOCKER-USER -p tcp -m tcp -m conntrack --ctorigdstport 993 -i ens3 -j RETURN
+-A DOCKER-USER -p tcp -m tcp -m conntrack --ctorigdstport 587 -i ens3 -j RETURN
+-A DOCKER-USER -p tcp -m tcp -m conntrack --ctorigdstport 143 -i ens3 -j RETURN
+-A DOCKER-USER -i ens3 -j DROP
+-A DOCKER-USER -j RETURN
+
+-A FILTERS -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+-A FILTERS -m conntrack --ctstate NEW -m tcp -p tcp --dport 22 -j ACCEPT
+-A FILTERS -j DROP
+
+COMMIT
