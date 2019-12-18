@@ -25,4 +25,6 @@ write_files:
                    nameservers:
                         addresses: [ "127.0.0.1" ]
                    addresses:
-                   - {{ ds.meta_data.meta.static_ip }}
+                   - {{ ds.meta_data.meta.static_ip }}/32
+runcmd:
+  - netplan apply
