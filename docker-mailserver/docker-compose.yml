@@ -1,7 +1,7 @@
 version: '2'
 services:
   mail:
-    image: tvial/docker-mailserver:dev
+    image: tvial/docker-mailserver:latest
     hostname: ${HOSTNAME}
     domainname: ${DOMAINNAME}
     container_name: ${CONTAINER_NAME}
@@ -14,7 +14,7 @@ services:
     - maillogs:/var/log/mail
     - /mnt/mail/maildata:/var/mail
     - /mnt/mail/mailstate:/var/mail-state
-    - ./config/:/tmp/docker-mailserver/
+    - /mnt/mail/config/:/tmp/docker-mailserver/
     - ../letsencrypt/etc:/etc/letsencrypt/:ro
     env_file:
     - env-mailserver
