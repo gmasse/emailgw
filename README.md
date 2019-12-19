@@ -1,35 +1,10 @@
-# emailgw
+# A stateless e-mail service based on docker-mailserver
 
-## Creating the VM
+[Step-by-step guide](https://gmasse.github.io/blog/2019/11/08/Take-control-of-your-e-mail/)
 
-```
-(optional) openstack keypair create --public-key ~/.ssh/id_rsa.pub mykey
-openstack server create --flavor s1-4 --key-name mykey --user-data cloudinit --image "Ubuntu 18.04" --property static_ip=1.2.3.4/32 email
-SRV_ID=4e960a2d-c354-45cc-9d58-e0fb84ef2dbc
+### Further information
 
-cinder type-list
-cinder create --name email_storage --volume-type classic 10
-VOL_ID=0e3a4a91-a69b-41ab-b0c6-184d86f89ab4
-nova volume-attach $SRV_ID $VOL_ID /dev/sdb
-```
-
-## Configuring the VM
-
-```
-echo "server:
-    interface: 127.0.0.1
-    interface: ::1
-    interface: 172.17.0.1
-    access-control: 172.16.0.0/12 allow
-    outgoing-interface: 1.2.3.4" | sudo tee /etc/unbound/unbound.conf.d/docker.conf
-```
-```
-echo "{
-    'dns': [ '172.17.0.1' ]
-}" | sudo tee /etc/docker/daemon.json
-```
-
-## (Optional) Log and Metrics management
+#### (Optional) Log and Metrics management
 ```
 wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
 echo "deb https://artifacts.elastic.co/packages/7.x/apt stable main" | sudo tee -a /etc/apt/sources.list.d/elastic-7.x.list
@@ -39,17 +14,17 @@ sudo systemctl enable filebeat
 sudo systemctl start filebeat
 ```
 
-## Maintenance
+#### Maintenance
 
-### Backup
+##### Backup
 Snapshot the volume:
 ```
 openstack volume snapshot create --force --volume email_storage email_storage_snap01
 ```
 
-## IMAP to Dovecot Migration
+#### IMAP to Dovecot Migration
 
-### Enable IMAP Master User on SOURCE server
+##### Enable IMAP Master User on SOURCE server
 Create a Master password file `passwd.masterusers`
 ```
 echo 'master:'`doveadm pw -s sha512-crypt` > /etc/dovecot/passwd.masterusers
@@ -73,7 +48,7 @@ You can now connect to any IMAP account with master user/password: `myuser@mydom
 
 ([Reference](https://doc.dovecot.org/configuration_manual/authentication/master_users/))
 
-### Sync from source server to NEW Dovecot server
+##### Sync from source server to NEW Dovecot server
 
 Add the follwing configuration to your target Dovecot server. `local.conf` is a good choice:
 ```
@@ -104,7 +79,7 @@ doveadm -o mail_fsync=never sync -1 -R -u user@domain imapc:
 
 https://wiki2.dovecot.org/Migration/Dsync
 
-## Tips
+#### Tips
 
 Retreiving and spam testing of an e-mail:
 ```
