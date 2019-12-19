@@ -14,7 +14,7 @@ services:
     - maillogs:/var/log/mail
     - /mnt/mail/maildata:/var/mail
     - /mnt/mail/mailstate:/var/mail-state
-    - /mnt/mail/config/:/tmp/docker-mailserver/
+    - /mnt/mail/docker-mailserver/config/:/tmp/docker-mailserver/
     - ../letsencrypt/etc:/etc/letsencrypt/:ro
     env_file:
     - env-mailserver
