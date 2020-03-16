@@ -16,7 +16,32 @@ sudo systemctl start filebeat
 
 #### Maintenance
 
-##### Backup
+##### Backup with restic
+```
+sudo apt install restic
+
+```
+Local backup:
+```
+sudo mkdir /backup
+sudo touch /root/.restic
+chmod 600 /root/.restic
+pwgen 24 1 > /root/.restic
+sudo restic -p /root/.restic -r /backup init
+sudo restic -p /root/.restic -r /backup backup /mnt/mail/
+cat <<EOF | sudo tee /etc/cron.d/backup
+#
+# cron.d/backup -- schedules periodic backups
+#
+
+# m h dom mon dow user  command
+37 2 * * * root         restic -p /root/.restic -r /backup backup /mnt/mail/ ; restic -p /root/.restic -r /backup forget -l 3
+EOF
+sudo systemctl restart cron
+```
+
+
+##### Snapshot
 Snapshot the volume:
 ```
 openstack volume snapshot create --force --volume email_storage email_storage_snap01
