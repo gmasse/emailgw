@@ -28,3 +28,4 @@ write_files:
                    - {{ ds.meta_data.meta.static_ip }}/32
 runcmd:
   - netplan apply
+  - sudo update-alternatives --set editor /usr/bin/vim.basic
