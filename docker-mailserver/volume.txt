@@ -61,7 +61,13 @@ sudo umount /mnt/mail
 sudo vgchange -an vg-mail
 sudo vgexport vg-mail
 
-##volume resize via Openstack API
+
+##volume resize via Openstack API (via Names, recommended)
+openstack server remove volume email email_storage
+openstack volume set --size 16 email_storage
+openstack server add volume --device /dev/sdb email email_storage
+
+##volume resize via Openstack API (via IDs)
 SRV_NAME='mailserver'
 openstack server show $SRV_NAME
 VOL_ID='e08b15bf-99d0-4a05-8402-8d5dc2425c21'
@@ -72,6 +78,7 @@ SRV_DEVICE=`openstack volume show $VOL_ID -f json | python3 -c "import sys, json
 openstack server remove volume $SRV_ID $VOL_ID
 openstack volume set --size 16 $VOL_ID
 openstack server add volume --device $SRV_DEVICE $SRV_ID $VOL_ID
+
 
 #re-enabling
 (sudo pvscan)
