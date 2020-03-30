@@ -87,9 +87,9 @@ sudo pvresize /dev/sdb
 (sudo lvextend -l +100%FREE vg-mail/thinpool)
 # OR if you are not using thin provisionning:
 sudo lvextend -l +100%FREE vg-mail/lv-mail
+sudo vgchange -ay vg-mail
 sudo e2fsck -f /dev/vg-mail/lv-mail
 sudo resize2fs /dev/vg-mail/lv-mail
-sudo vgchange -ay vg-mail
 sudo mount /mnt/mail
 
 
