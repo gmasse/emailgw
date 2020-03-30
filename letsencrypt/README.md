@@ -14,7 +14,11 @@ cd ~/letsencrypt
 sudo docker run --rm -ti -v $PWD/log/:/var/log/letsencrypt/ -v $PWD/etc/:/etc/letsencrypt/ -p 80:80 -p 443:443 certbot/certbot renew
 ```
 
-TODO: reload dovecot if certificate's renewed
+TODO: test if certificates have been renewed (ex: `[[ $(( $(date +%s)-$(stat -c %Y etc/csr) )) -lt 5*60 ]]`)
+```
+cd ~/docker-mailserver
+sudo docker-compose exec mail bash -c '[[ "$SMTP_ONLY" -ne 1 ]] && dovecot reload'
+```
 
 ## Tips
 
