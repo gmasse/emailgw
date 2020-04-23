@@ -34,14 +34,21 @@ NB: it takes time, launch in a `screen` or `tmux` if you run from command line
 sudo apt install restic
 
 ```
-Local backup:
+##### Local backup:
+Generate a backup key:
 ```
-sudo mkdir /backup
 sudo touch /root/.restic
 chmod 600 /root/.restic
 pwgen 24 1 > /root/.restic
+```
+Launch the first backup to `/backup` directory:
+```
+sudo mkdir /backup
 sudo restic -p /root/.restic -r /backup init
 sudo restic -p /root/.restic -r /backup backup /mnt/mail/
+```
+Add to crontab:
+```
 cat <<EOF | sudo tee /etc/cron.d/backup
 #
 # cron.d/backup -- schedules periodic backups
@@ -53,7 +60,22 @@ EOF
 sudo systemctl restart cron
 ```
 
-#### Snapshot
+##### Remote (Openstack Swift) backup:
+Create a specific Openstack user for these backup tasks.
+Create Swift container named `backup_email` and limit rights to this user:
+```
+swift --os-region-name SBG post -r "<os_tenant_name>:<os_username>" backup_email
+swift --os-region-name SBG post -w "<os_tenant_name>:<os_username>" backup_email
+```
+Generate a backup key if needed (see above), then launch the first remote backup:
+```
+source .openrc
+restic -p /root/.restic -r swift:backup_email:/ init
+restic -p /root/.restic -r swift:backup_email:/ backup /mnt/mail/
+```
+Add to crontab.
+
+#### Block Storage Snapshot
 Snapshot the volume:
 ```
 openstack volume snapshot create --force --volume email_storage email_storage_snap01
