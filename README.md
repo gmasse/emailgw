@@ -57,7 +57,6 @@ cat <<EOF | sudo tee /etc/cron.d/backup
 # m h dom mon dow user  command
 37 2 * * * root         restic -p /root/.restic -r /backup backup /mnt/mail/ ; restic -p /root/.restic -r /backup forget -l 3
 EOF
-sudo systemctl restart cron
 ```
 
 ##### Remote (Openstack Swift) backup:
