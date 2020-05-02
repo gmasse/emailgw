@@ -15,7 +15,8 @@ sudo systemctl enable filebeat
 sudo systemctl start filebeat
 sudo apt-get install metricbeat
 sudo vi /etc/metricbeat/metricbeat.yml
-sudo systemctl restart metricbeat
+sudo systemctl enable metricbeat
+sudo systemctl start metricbeat
 ```
 
 ### Maintenance
